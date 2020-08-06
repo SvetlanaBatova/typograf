@@ -22,6 +22,23 @@ export default class Typograf {
     constructor(prefs) {
         this._prefs = typeof prefs === 'object' ? prefs : {};
         this._prefs.locale = prepareLocale(this._prefs.locale);
+        if (this._prefs.locale && !this._prefs.mainLocale) {
+            console.warn('Warning: Main locale not set. locale[0] is used as main locale');
+        }
+        this._prefs.locale = prepareLocale(this._prefs.locale);
+        if (this._prefs.mainLocale) {
+            let index = this._prefs.locale.indexOf(this._prefs.mainLocale);
+            switch (index) {
+                case 0:
+                    break;
+                case -1:
+                    this._prefs.locale = [ this._prefs.mainLocale ].concat(this._prefs.locale);
+                    break;
+                default:
+                    this._prefs.locale.splice(index);
+                    this._prefs.locale = [ this._prefs.mainLocale ].concat(this._prefs.locale);
+            }
+        }
         this._prefs.live = this._prefs.live || false;
 
         this._safeTags = new SafeTags();
